@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVENTU — Organizer CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: '#a34d69', accent: { DEFAULT: '#e07fa2', light: '#f0aecb' } },
+                    fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+    <div class="login-card glass-strong">
+        <div class="login-logo">Ev</div>
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-black text-white uppercase tracking-tight mb-1">EVENTU CRM</h1>
+            <p class="text-sm font-semibold" style="color:var(--text-muted)">Organizer Portal — Secure Access</p>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-muted)">Username</label>
+                <div class="input-wrapper">
+                    <i data-lucide="user" class="input-icon"></i>
+                    <input id="login-name" type="text" class="form-input pl-10" placeholder="Enter your username" autocomplete="username">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-muted)">Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="input-icon"></i>
+                    <input id="login-password" type="password" class="form-input pl-10" placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+            <div id="login-error" class="login-error">
+                <i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i>
+                <span id="login-error-text">Invalid credentials. Please try again.</span>
+            </div>
+            <button id="btn-login" class="btn-primary mt-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i>
+                Access Dashboard
+            </button>
+        </div>
+        <p class="text-center text-xs mt-6" style="color:var(--text-muted)">EVENTU &nbsp;·&nbsp; Internal Use Only</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+    <header id="admin-header">
+        <div class="header-logo">
+            <div class="header-logo-icon">Ev</div>
+            <div>
+                <div class="text-sm font-black text-white uppercase tracking-tight leading-none">EVENTU</div>
+                <div class="text-xs font-bold uppercase tracking-widest" style="color:var(--accent)">CRM Panel</div>
+            </div>
+        </div>
+        <div class="header-meta">
+            <div id="sync-indicator" class="sync-indicator hidden">
+                <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin" style="color:var(--accent)"></i>
+                <span>Syncing…</span>
+            </div>
+            <div id="clock" class="clock-display">00:00:00</div>
+            <div id="connection-badge" class="connection-badge disconnected">
+                <div class="connection-dot"></div>
+                <span id="connection-label">Offline</span>
+            </div>
+            <div class="manager-badge">
+                <div class="manager-avatar" id="manager-avatar">?</div>
+                <span id="manager-display-name" class="text-sm font-semibold text-white">—</span>
+            </div>
+            <button id="btn-logout" class="btn-logout">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                Logout
+            </button>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="bookings">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span>Bookings</span>
+            </button>
+            <button class="tab-btn" data-tab="events">
+                <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                <span>Events</span>
+            </button>
+            <button class="tab-btn" data-tab="categories">
+                <i data-lucide="tags" class="w-4 h-4"></i>
+                <span>Categories</span>
+            </button>
+            <button class="tab-btn hidden" id="tab-btn-team" data-tab="team">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>Team</span>
+            </button>
+        </nav>
+
+        <!-- BOOKINGS TAB -->
+        <section id="tab-bookings" class="tab-panel">
+            <!-- Attendance check-in by ticket code (перевірка списків) -->
+            <div class="rounded-xl border border-white/10 bg-white/5 p-3 mb-4 flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold" style="color:var(--text-muted)">🎫 Check-in by ticket code:</span>
+                <input id="checkin-code" class="form-input" style="max-width:200px;text-transform:uppercase" placeholder="EVT-XXXXXXXX" autocomplete="off">
+                <button id="btn-checkin-code" class="btn-primary" style="width:auto;padding:8px 16px">Verify &amp; check-in</button>
+                <span id="checkin-result" class="text-xs font-semibold"></span>
+            </div>
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Booking Board</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Real-time Kanban · WebSocket connected · <span id="total-count">0</span> total bookings
+                    </p>
+                </div>
+                <button id="btn-refresh" class="btn-ghost" title="Force re-sync from database">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Re-sync DB</span>
+                </button>
+            </div>
+
+            <div class="kanban-board">
+                <div class="kanban-column col-new">
+                    <div class="column-header">
+                        <div class="column-title"><span>🎟️</span> Reserved</div>
+                        <div class="column-count" id="count-pending">0</div>
+                    </div>
+                    <div class="column-cards" id="col-pending"></div>
+                </div>
+                <div class="kanban-column col-processing">
+                    <div class="column-header">
+                        <div class="column-title"><span>✅</span> Confirmed</div>
+                        <div class="column-count" id="count-confirmed">0</div>
+                    </div>
+                    <div class="column-cards" id="col-confirmed"></div>
+                </div>
+                <div class="kanban-column col-completed">
+                    <div class="column-header">
+                        <div class="column-title"><span>🎓</span> Attended</div>
+                        <div class="column-count" id="count-checked_in">0</div>
+                    </div>
+                    <div class="column-cards" id="col-checked_in"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENTS TAB -->
+        <section id="tab-events" class="tab-panel hidden">
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Events</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Public events shown on the website · <span id="events-total-count">0</span> active
+                    </p>
+                </div>
+                <button id="btn-add-event" class="btn-add-job">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Event</span>
+                </button>
+            </div>
+            <div id="events-list" class="jobs-list"></div>
+        </section>
+
+        <!-- CATEGORIES TAB -->
+        <section id="tab-categories" class="tab-panel hidden">
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Categories</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Event categories / website filters · <span id="categories-total-count">0</span> total
+                    </p>
+                </div>
+                <button id="btn-add-category" class="btn-add-job">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Category</span>
+                </button>
+            </div>
+            <div id="categories-list" class="jobs-list"></div>
+        </section>
+
+        <!-- TEAM TAB (super_admin only) -->
+        <section id="tab-team" class="tab-panel hidden">
+            <div class="page-header">
+                <div>
+                    <h2 class="text-xl font-black text-white uppercase tracking-tight">Organizers</h2>
+                    <p class="text-sm mt-0.5" style="color:var(--text-muted)">
+                        Super-admins add and remove organizer accounts · <span id="staff-total-count">0</span> total
+                    </p>
+                </div>
+                <button id="btn-add-staff" class="btn-add-job">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Add Organizer</span>
+                </button>
+            </div>
+            <div id="staff-list" class="jobs-list"></div>
+        </section>
+    </main>
+</div>
+
+<!-- EVENT EDITOR MODAL -->
+<div id="event-modal-overlay" class="job-modal-overlay hidden">
+    <div class="job-modal glass-strong">
+        <div class="job-modal-header">
+            <h3 id="event-modal-title">Add Event</h3>
+            <button id="event-modal-close" class="job-modal-close" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <form id="event-form" class="job-form" autocomplete="off">
+            <input type="hidden" id="event-id">
+            <div class="job-form-grid">
+                <div class="job-field">
+                    <label for="event-title-ua">Title (UA) <span class="req">*</span></label>
+                    <input id="event-title-ua" class="form-input" placeholder="Лекція про ІІ" required>
+                </div>
+                <div class="job-field">
+                    <label for="event-title-en">Title (EN) <span class="req">*</span></label>
+                    <input id="event-title-en" class="form-input" placeholder="AI Lecture" required>
+                </div>
+                <div class="job-field">
+                    <label for="event-type">Category <span class="req">*</span></label>
+                    <select id="event-type" class="form-input" required></select>
+                </div>
+                <div class="job-field">
+                    <label for="event-venue">Venue</label>
+                    <input id="event-venue" class="form-input" placeholder="Main Hall / Room 101">
+                </div>
+                <div class="job-field">
+                    <label for="event-starts-at">Starts at</label>
+                    <input id="event-starts-at" type="datetime-local" class="form-input">
+                </div>
+                <div class="job-field">
+                    <label for="event-price">Price</label>
+                    <input id="event-price" class="form-input" placeholder="Free / 150 UAH">
+                </div>
+                <div class="job-field">
+                    <label for="event-capacity">Capacity <span style="font-weight:400;color:var(--text-muted)">— 0 = unlimited</span></label>
+                    <input id="event-capacity" type="number" min="0" class="form-input" value="0">
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="event-tags">Tags <span style="font-weight:400;color:var(--text-muted)">— comma-separated</span></label>
+                    <input id="event-tags" class="form-input" placeholder="ai, tech, free">
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="event-group">🔔 Telegram group <span style="font-weight:400;color:var(--text-muted)">— booking alerts for this event</span></label>
+                    <input id="event-group" class="form-input" placeholder="-1001234567890">
+                    <small style="color:var(--text-muted)">Add the bot to a group, run <code>/groupid</code> there, paste the id here. Leave empty for none.</small>
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="event-description">Description</label>
+                    <textarea id="event-description" class="form-input" rows="3" placeholder="Short description of the event…"></textarea>
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="event-image">Photo (optional — JPEG/PNG/WebP, max 5 MB)</label>
+                    <input id="event-image" type="file" class="form-input" accept="image/jpeg,image/png,image/webp">
+                    <small style="color:var(--text-muted)">On edit, leave empty to keep the current photo.</small>
+                </div>
+                <div class="job-field job-field-full">
+                    <label class="job-checkbox">
+                        <input type="checkbox" id="event-is-featured" checked>
+                        <span>Mark as FEATURED (highlighted on the website)</span>
+                    </label>
+                </div>
+                <div class="job-field job-field-full">
+                    <label>Where to publish <span class="req">*</span></label>
+                    <div id="event-sites"></div>
+                    <small style="color:var(--text-muted)">Choose one or more portals (none = show everywhere).</small>
+                </div>
+            </div>
+            <div id="event-form-error" class="job-form-error"></div>
+            <div class="job-modal-actions">
+                <button type="button" id="event-cancel" class="btn-ghost">Cancel</button>
+                <button type="submit" id="event-save" class="btn-primary" style="width:auto;">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save Event</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CATEGORY EDITOR MODAL -->
+<div id="category-modal-overlay" class="job-modal-overlay hidden">
+    <div class="job-modal glass-strong">
+        <div class="job-modal-header">
+            <h3 id="category-modal-title">Add Category</h3>
+            <button id="category-modal-close" class="job-modal-close" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <form id="category-form" class="job-form" autocomplete="off">
+            <input type="hidden" id="category-id">
+            <div class="job-form-grid">
+                <div class="job-field">
+                    <label for="category-label-ua">Name (UA) <span class="req">*</span></label>
+                    <input id="category-label-ua" class="form-input" placeholder="Концерт" required>
+                </div>
+                <div class="job-field">
+                    <label for="category-label-en">Name (EN) <span class="req">*</span></label>
+                    <input id="category-label-en" class="form-input" placeholder="Concert" required>
+                </div>
+            </div>
+            <div id="category-form-error" class="job-form-error"></div>
+            <div class="job-modal-actions">
+                <button type="button" id="category-cancel" class="btn-ghost">Cancel</button>
+                <button type="submit" id="category-save" class="btn-primary" style="width:auto;">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save Category</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- STAFF EDITOR MODAL -->
+<div id="staff-modal-overlay" class="job-modal-overlay hidden">
+    <div class="job-modal glass-strong">
+        <div class="job-modal-header">
+            <h3>Add Organizer</h3>
+            <button id="staff-modal-close" class="job-modal-close" aria-label="Close"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <form id="staff-form" class="job-form" autocomplete="off">
+            <div class="job-form-grid">
+                <div class="job-field">
+                    <label for="staff-username">Username <span class="req">*</span></label>
+                    <input id="staff-username" class="form-input" required autocomplete="off">
+                </div>
+                <div class="job-field">
+                    <label for="staff-password">Password <span class="req">*</span> <span style="font-weight:400;color:var(--text-muted)">— min 6</span></label>
+                    <input id="staff-password" type="text" class="form-input" required autocomplete="new-password">
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="staff-fullname">Full name</label>
+                    <input id="staff-fullname" class="form-input">
+                </div>
+                <div class="job-field job-field-full">
+                    <label for="staff-role">Role</label>
+                    <select id="staff-role" class="form-input">
+                        <option value="organizer">Organizer</option>
+                        <option value="super_admin">Super-admin</option>
+                    </select>
+                </div>
+            </div>
+            <div id="staff-form-error" class="job-form-error"></div>
+            <div class="job-modal-actions">
+                <button type="button" id="staff-cancel" class="btn-ghost">Cancel</button>
+                <button type="submit" class="btn-primary" style="width:auto;">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Create</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

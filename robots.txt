@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nikaaaxs.github.io/Eventu/sitemap.xml

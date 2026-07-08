@@ -1,0 +1,125 @@
+:root {
+  --bg-main: #fdf3f7;
+  --text-main: #3f2530;
+  --text-muted: #8a6b76;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --border-color: rgba(245, 220, 230, 1);
+  --primary: #ffc5d9;
+  --accent: #ffb3cf;
+  --accent-light: #f0aecb;
+}
+
+.dark {
+  --bg-main: #1b0f15;
+  --text-main: #fbeef3;
+  --text-muted: #c69fae;
+  --card-bg: rgba(52, 30, 40, 0.7);
+  --border-color: rgb(255, 196, 219);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+  border-radius: 1rem;
+}
+
+.glass-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-slide-in-left { animation: slideInLeft 0.6s ease-out forwards; }
+.animate-scale-up { animation: scaleUp 0.6s ease-out forwards; }
+
+/* Modal styles */
+.modal-overlay {
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* Submit button: disabled = grey, enabled = branded colour */
+#btn-book-submit:disabled {
+  background-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+#btn-book-submit:not(:disabled) {
+  background-color: #a34d69;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+#btn-book-submit:not(:disabled):hover {
+  transform: translateY(-2px);
+  opacity: 0.92;
+}
+
+.dark #btn-book-submit:disabled {
+  background-color: #334155;
+  color: #64748b;
+}
+
+.dark #btn-book-submit:not(:disabled) {
+  background-color: #e07fa2;
+  color: #0f172a;
+}
