@@ -16,7 +16,7 @@
 
     // Google OAuth 2.0 Web Client ID (student sign-in). The site origin must be in
     // the OAuth client's "Authorized JavaScript origins" in Google Cloud Console.
-    const GOOGLE_CLIENT_ID = '145918477408-csksl8vlu7ugmmd9efemjhb2q9vdal5q.apps.googleusercontent.com';
+    const GOOGLE_CLIENT_ID = '507589454513-40mlla3mv87doauuqehto4p2r66f30pj.apps.googleusercontent.com';
 
     const host = window.location.hostname;
     const isLocal =
